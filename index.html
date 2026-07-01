@@ -25,9 +25,39 @@ canvas {
   box-shadow: 0 0 60px rgba(100, 30, 150, 0.3);
   touch-action: none;
 }
+#rotate-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #0a0a0f;
+  z-index: 9999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ddaaff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+#rotate-overlay .icon {
+  font-size: 64px;
+  margin-bottom: 30px;
+  animation: rotate-phone 2s ease-in-out infinite;
+}
+@keyframes rotate-phone {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+#rotate-overlay h2 { font-size: 24px; margin-bottom: 10px; }
+#rotate-overlay p { font-size: 16px; color: #888; }
 </style>
 </head>
 <body>
+<div id="rotate-overlay">
+  <div class="icon">📱</div>
+  <h2>Rotate your device</h2>
+  <p>Landscape mode recommended for best experience</p>
+</div>
 <canvas id="game"></canvas>
 <script>
 const canvas = document.getElementById('game');
@@ -36,13 +66,21 @@ const W = 960, H = 640;
 canvas.width = W;
 canvas.height = H;
 
+const rotateOverlay = document.getElementById('rotate-overlay');
+function checkOrientation() {
+  const isMobile = window.innerWidth < 768;
+  const isPortrait = window.innerWidth < window.innerHeight;
+  rotateOverlay.style.display = (isMobile && isPortrait) ? 'flex' : 'none';
+}
 function resizeCanvas() {
   const scale = Math.min(window.innerWidth / W, window.innerHeight / H);
   canvas.style.width = Math.floor(W * scale) + 'px';
   canvas.style.height = Math.floor(H * scale) + 'px';
+  checkOrientation();
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 200));
 
 if (!CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
