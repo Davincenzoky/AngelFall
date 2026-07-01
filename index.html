@@ -1046,6 +1046,28 @@ canvas.addEventListener('touchstart', e => {
     } else if (bd < BTN_RADIUS + 15 && !atkBtn.active) {
       atkBtn.active = true; atkBtn.touchId = t.identifier;
       if (!gameOver && gameStart && !weaponSelect && !charSelect && !levelUpOptions) playerAttack();
+    } else if (weaponSelect) {
+      for (let i = 0; i < 8; i++) {
+        const col = i % 4, row = Math.floor(i / 4);
+        const cx = 120 + col * 240, cy = row === 0 ? 75 : 340;
+        if (tx >= cx - 100 && tx <= cx + 100 && ty >= cy && ty <= cy + 220) {
+          selectedWeapon = i; weaponSelect = false; charSelect = true; break;
+        }
+      }
+    } else if (charSelect) {
+      for (let i = 0; i < 3; i++) {
+        const cx = 180 + i * 300;
+        if (tx >= cx - 120 && tx <= cx + 120 && ty >= 80 && ty <= 540) {
+          selectedChar = i; charSelect = false; gameStart = true; waveTransition = 60; break;
+        }
+      }
+    } else if (levelUpOptions) {
+      for (let i = 0; i < 3; i++) {
+        const cx = 160 + i * 320;
+        if (tx >= cx - 130 && tx <= cx + 130 && ty >= 120 && ty <= 420) {
+          levelUpSelected = i; applyLevelUpChoice(); break;
+        }
+      }
     }
   }
 }, { passive: false });
